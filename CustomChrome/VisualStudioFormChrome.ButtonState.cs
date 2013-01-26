@@ -39,7 +39,7 @@ namespace CustomChrome
 
                 var rightOffset =
                     parent.Form.Width -
-                    parent._formChrome.AdjustedResizeBorderThickness.Left;
+                    parent.FormChrome.AdjustedResizeBorderThickness.Left;
 
                 if (drawClose)
                     Close = GetButtonState(parent, ref rightOffset, ChromeButton.Close, enableClose);
@@ -59,12 +59,12 @@ namespace CustomChrome
 
                 var bounds = new Rectangle(
                     offset,
-                    parent._formChrome.AdjustedResizeBorderThickness.Top,
+                    parent.FormChrome.AdjustedResizeBorderThickness.Top,
                     ButtonSize.Width,
                     ButtonSize.Height
                 );
 
-                var location = parent._formChrome.PointToClient(Cursor.Position);
+                var location = parent.FormChrome.PointToClient(Cursor.Position);
                 bool over = bounds.Contains(location);
 
                 ChromeButtonState state;

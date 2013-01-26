@@ -17,7 +17,6 @@ namespace CustomChrome
 
         private static readonly bool _designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
-        private FormChrome _formChrome;
         private DropShadowManager _dropShadowManager;
         private Color _borderColor;
         private Color _primaryColor;
@@ -36,6 +35,8 @@ namespace CustomChrome
         private bool _disposed;
 
         private Point? CaptureStart { get; set; }
+
+        public FormChrome FormChrome { get; private set; }
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -65,7 +66,7 @@ namespace CustomChrome
                         Form.MouseMove += Form_MouseMove;
                         Form.MouseUp += Form_MouseUp;
 
-                        _formChrome.ContainerControl = Form;
+                        FormChrome.ContainerControl = Form;
 
                         _dropShadowManager = new DropShadowManager(Form)
                         {
@@ -107,7 +108,7 @@ namespace CustomChrome
                         _primaryImageCache = _primaryImageCacheManager.GetCached(value);
 
                         if (Form != null)
-                            _formChrome.PaintNonClientArea();
+                            FormChrome.PaintNonClientArea();
 
                         if (_primaryColorBrush != null)
                             _primaryColorBrush.Dispose();
@@ -120,19 +121,19 @@ namespace CustomChrome
 
         public VisualStudioFormChrome()
         {
-            _formChrome = new FormChrome
+            FormChrome = new FormChrome
             {
                 CaptionHeight = 31,
                 ResizeBorderThickness = new Padding(0),
                 DoubleBuffered = true
             };
 
-            _formChrome.NonClientAreaPaint += _formChrome_NonClientAreaPaint;
-            _formChrome.NonClientMouseDown += _formChrome_NonClientMouseDown;
-            _formChrome.NonClientMouseUp += _formChrome_NonClientMouseUp;
-            _formChrome.NonClientMouseLeave += _formChrome_NonClientMouseLeave;
-            _formChrome.NonClientMouseMove += _formChrome_NonClientMouseMove;
-            _formChrome.SystemCommand += _formChrome_SystemCommand;
+            FormChrome.NonClientAreaPaint += _formChrome_NonClientAreaPaint;
+            FormChrome.NonClientMouseDown += _formChrome_NonClientMouseDown;
+            FormChrome.NonClientMouseUp += _formChrome_NonClientMouseUp;
+            FormChrome.NonClientMouseLeave += _formChrome_NonClientMouseLeave;
+            FormChrome.NonClientMouseMove += _formChrome_NonClientMouseMove;
+            FormChrome.SystemCommand += _formChrome_SystemCommand;
 
             _blackImageCache = new ImageCache(Color.Black);
             _whiteImageCache = new ImageCache(Color.White);
@@ -155,7 +156,7 @@ namespace CustomChrome
 
         void _formChrome_NonClientAreaPaint(object sender, NonClientPaintEventArgs e)
         {
-            var border = _formChrome.AdjustedResizeBorderThickness;
+            var border = FormChrome.AdjustedResizeBorderThickness;
 
             if (border != _lastBorder)
             {
@@ -261,7 +262,7 @@ namespace CustomChrome
                 CaptureStart = e.Location;
                 Form.Capture = true;
 
-                _formChrome.PaintNonClientArea();
+                FormChrome.PaintNonClientArea();
             }
         }
 
@@ -321,7 +322,7 @@ namespace CustomChrome
             if (_overButton != button)
             {
                 _overButton = button;
-                _formChrome.PaintNonClientArea();
+                FormChrome.PaintNonClientArea();
             }
         }
 
@@ -330,7 +331,7 @@ namespace CustomChrome
             if (_downButton != button)
             {
                 _downButton = button;
-                _formChrome.PaintNonClientArea();
+                FormChrome.PaintNonClientArea();
             }
         }
 
@@ -344,7 +345,7 @@ namespace CustomChrome
                 return;
 
             _dropShadowManager.ImageCache =
-                _formChrome.IsActive
+                FormChrome.IsActive
                 ? _borderImageCacheManager.GetCached(_borderColor)
                 : _borderImageCacheManager.GetCached(Color.FromArgb(153, 153, 153));
         }
@@ -365,10 +366,10 @@ namespace CustomChrome
                     _primaryImageCacheManager = null;
                 }
 
-                if (_formChrome != null)
+                if (FormChrome != null)
                 {
-                    _formChrome.Dispose();
-                    _formChrome = null;
+                    FormChrome.Dispose();
+                    FormChrome = null;
                 }
 
                 if (_dropShadowManager != null)
